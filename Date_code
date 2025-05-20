@@ -1,0 +1,50 @@
+from datetime import datetime
+
+def clean_date_input(date_str):
+    return date_str.replace("-", "/").replace(" ", "/")
+
+def parse_date(date_str):
+    date_str = clean_date_input(date_str)
+    for fmt in ("%d/%m/%Y", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    raise ValueError("Invalid date format. Use dd/mm/yyyy or yyyy-mm-dd with /, -, or space.")
+
+def convert_days(days): 
+    years = days // 365
+    months = (days % 365) // 30
+    remaining_days = (days % 365) % 30
+    return years, months, remaining_days
+
+while True:
+    try:
+        print("\nChoose an option:")
+        print("1. Difference in days")
+        print("2. Convert to years, months, days")
+        option = input("Enter 1 or 2: ").strip()
+
+        start_input = input("Enter the start date: ")
+        end_input = input("Enter the end date: ")
+
+        start_date = parse_date(start_input)
+        end_date = parse_date(end_input)
+
+        difference = abs((end_date - start_date).days)
+
+        if option == "1":
+            print("Difference in days:", difference)
+        elif option == "2":
+            y, m, d = convert_days(difference)
+            print(f"Approximate difference: {y} years, {m} months, {d} days")
+        else:
+            print("Invalid option. Please enter 1 or 2.")
+
+    except ValueError as e:
+        print("Error:", e)
+
+    again = input("Do you want to do another calculation? (yes/no): ").strip().lower()
+    if again not in ["yes", "y"]:
+        print("Goodbye!")
+        break
